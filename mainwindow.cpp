@@ -2,6 +2,8 @@
 #include "ui_mainwindow.h"
 #include <math.h>
 
+#include "interpreter/parser.h"
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -107,10 +109,23 @@ void MainWindow::interpret_expression(){
     double *signaly;
     signaly = new double[num_samples];
 
+    // create a parser object
+    Parser prs;
+
+    QString expr = ui->expression_lineEdit->text();
+
+    if(expr.contains("=")){
+        expr = expr.remove(0, expr.indexOf("=")+1);
+    }
+
     int i=0;
     for (int x = ((num_samples/2)*(-1)); x < (num_samples/2); x++) {
+            QString var = "x="+QString::number(x);
+            prs.parse(var.toStdString().c_str());
+
+            // evaluate the expression
             signalx[i]= x;
-            signaly[i]= pow(x,2);
+            signaly[i]= prs.parse(expr.toStdString().c_str());;
             i++;
     }
 
