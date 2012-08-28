@@ -3,13 +3,16 @@
 
 #include <QMainWindow>
 #include <QFileDialog>
+#include <QPainter>
+#include <QWheelEvent>
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
 #include <qwt_plot_scaleitem.h>
 #include <qwt_plot_grid.h>
 #include <qwt_plot_renderer.h>
 #include <qwt_plot_picker.h>
-#include <QPainter>
+#include <qwt_picker_machine.h>
+
 
 namespace Ui {
 class MainWindow;
@@ -32,11 +35,12 @@ private slots:
     void interpret_expression();
 
     void on_graphButton_clicked();
+    void wheelEvent(QWheelEvent *event);
 
 private:
     Ui::MainWindow *ui;
 
-    enum {step_axis = 5, num_samples = 100, max_zoom=1000 };
+    enum {step_axis = 5, num_samples = 2000, max_zoom=1000 };
     int min_axis;
     int max_axis;
 

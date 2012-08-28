@@ -60,9 +60,17 @@ void MainWindow::create_graph_viewport(){
     grid->setPen(QPen(Qt::black, 0, Qt::DotLine));
     grid->attach(plot);
 
+    QwtPlotPicker* picker = new QwtPlotPicker(QwtPlot::xBottom, QwtPlot::yLeft, QwtPlotPicker::CrossRubberBand,
+                                              QwtPicker::ActiveOnly, plot->canvas());
+    picker->setStateMachine(new QwtPickerDragPointMachine());
+    picker->setRubberBandPen(QColor(Qt::darkMagenta));
+    picker->setRubberBand(QwtPicker::CrossRubberBand);
+    picker->setTrackerPen(QColor(Qt::green));
+
     plot->setAxisScale(0,min_axis,max_axis);
     plot->setAxisScale(2,min_axis,max_axis);
     ui->centralWidget->layout()->addWidget(plot);
+    connect(ui->expression_lineEdit, SIGNAL(returnPressed()),ui->graphButton,SIGNAL(clicked()));
 
 }
 
@@ -137,4 +145,16 @@ void MainWindow::interpret_expression(){
 void MainWindow::on_graphButton_clicked()
 {
     interpret_expression();
+}
+
+void MainWindow::wheelEvent(QWheelEvent *event)
+{
+    if(event->delta() > 0){
+        //qDebug()<<"Mouse event arriba";
+        zoom_in();
+    }
+    else{
+        //qDebug()<<"Mouse event abajo";
+        zoom_out();
+    }
 }
