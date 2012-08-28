@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <math.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -39,8 +40,10 @@ void MainWindow::create_actions(){
 }
 
 void MainWindow::create_graph_viewport(){
-    plot = new QwtPlot();
+    max_axis = 20;
+    min_axis = -20;
 
+    plot = new QwtPlot();
     plot->setCanvasBackground(Qt::white);
 
     QwtPlotScaleItem *scaleItem = new QwtPlotScaleItem(QwtScaleDraw::RightScale, 0.0);
@@ -55,39 +58,68 @@ void MainWindow::create_graph_viewport(){
     grid->setPen(QPen(Qt::black, 0, Qt::DotLine));
     grid->attach(plot);
 
-    plot->setAxisScale(0,-20,20);
-    plot->setAxisScale(2,-20,20);
+    plot->setAxisScale(0,min_axis,max_axis);
+    plot->setAxisScale(2,min_axis,max_axis);
     ui->centralWidget->layout()->addWidget(plot);
 
 }
 
 void MainWindow::save()
 {
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Nome file da esportare"), QString(),"Graphic files (*.png  )");
 
+    if ( !fileName.isEmpty() ){
+        QImage image( QSize(800,600), QImage::Format_ARGB32 );
+        image.fill(QColor(Qt::white).rgba());
+        QPainter painter(&image);
+
+        QwtPlotRenderer renderer;
+        renderer.render(plot, &painter, image.rect());
+        painter.end();
+        image.save(fileName, 0, 0);
+    }
 }
 
 void MainWindow::zoom_in(){
-
+    if(max_axis > step_axis){
+        min_axis = min_axis + step_axis;
+        max_axis = max_axis - step_axis;
+        plot->setAxisScale(0,min_axis,max_axis);
+        plot->setAxisScale(2,min_axis,max_axis);
+        plot->replot();
+    }
 }
 
 void MainWindow::zoom_out(){
-
+    if(max_axis < max_zoom){
+        min_axis = min_axis - step_axis;
+        max_axis = max_axis + step_axis;
+        plot->setAxisScale(0,min_axis,max_axis);
+        plot->setAxisScale(2,min_axis,max_axis);
+        plot->replot();
+    }
 }
 
 void MainWindow::interpret_expression(){
     signal = new QwtPlotCurve("Signal");
+    double *signalx;
+    signalx = new double[num_samples];
+    double *signaly;
+    signaly = new double[num_samples];
 
-    static double fase= 0;
-    fase+= 1;
-    double *t;
-    t = new double[1000];
-    double *y;
-    y = new double[1000];
-    for (int i= 0; i < 1000; ++i) {
-            t[i]= i;
-            y[i]= 3 * sin (M_2_PI * 10.0 * t[i] + fase * M_PI / 10);
+    int i=0;
+    for (int x = ((num_samples/2)*(-1)); x < (num_samples/2); x++) {
+            signalx[i]= x;
+            signaly[i]= pow(x,2);
+            i++;
     }
-    signal->setRawSamples(t, y, 1000);
+
+    signal->setRawSamples(signalx, signaly, num_samples);
     signal->attach(plot);
     plot->replot();
+}
+
+void MainWindow::on_graphButton_clicked()
+{
+    interpret_expression();
 }
