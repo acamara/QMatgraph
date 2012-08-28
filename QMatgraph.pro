@@ -7,16 +7,15 @@
 QT       += core gui
 CONFIG   += qwt
 
-TARGET = Matgraph
+TARGET   = QMatgraph
 TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+           mainwindow.cpp
 
-HEADERS  += mainwindow.h
+HEADERS   += mainwindow.h
 
-FORMS    += mainwindow.ui
+FORMS     += mainwindow.ui
 
-RESOURCES += \
-    resources.qrc
+RESOURCES += resources.qrc
