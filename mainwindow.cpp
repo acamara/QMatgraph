@@ -42,8 +42,8 @@ void MainWindow::create_actions(){
 }
 
 void MainWindow::create_graph_viewport(){
-    max_axis = 20;
-    min_axis = -20;
+    max_axis = 50;
+    min_axis = -50;
 
     plot = new QwtPlot();
     plot->setCanvasBackground(Qt::white);
@@ -137,6 +137,7 @@ void MainWindow::interpret_expression(){
             i++;
     }
 
+    signal->setStyle(QwtPlotCurve::Lines);
     signal->setRawSamples(signalx, signaly, num_samples);
     signal->attach(plot);
     plot->replot();

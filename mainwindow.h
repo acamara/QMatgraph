@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QPainter>
 #include <QWheelEvent>
+#include <QList>
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
 #include <qwt_plot_scaleitem.h>
@@ -12,6 +13,8 @@
 #include <qwt_plot_renderer.h>
 #include <qwt_plot_picker.h>
 #include <qwt_picker_machine.h>
+#include <qwt_scale_div.h>
+#include <qwt_curve_fitter.h>
 
 
 namespace Ui {
